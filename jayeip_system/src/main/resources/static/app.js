@@ -151,13 +151,21 @@ function loadLeaveRequests() {
 }
 
 function reviewLeave(id, status) {
+    const action = status === 'APPROVED' ? '核准' : '駁回';
+    if (!confirm(`確定要${action}這張假單嗎？`)) return;
+    
     fetch(`/api/leave-requests/${id}/status?status=${status}`, {
         method: 'PATCH'
     })
-    .then(response => {
+    .then(async response => {
         if (response.ok) {
             alert('審核完成！');
-            loadLeaveRequests(); // 重新整理假單清單
+            loadLeaveRequests();
+        } else {
+            // 這裡可以抓到後端 throw new RuntimeException 的訊息
+            const errorData = await response.json();
+            alert('失敗原因：' + (errorData.message || '伺服器內部錯誤'));
         }
-    });
+    })
+    .catch(error => console.error('Error:', error));
 }
