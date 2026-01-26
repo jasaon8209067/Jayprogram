@@ -8,5 +8,7 @@ public class LeaveRequestCreateDto {
     private String startDate;
     private String endDate;
     private String reason;
+    private Long id;
+    private String status;
 
 }

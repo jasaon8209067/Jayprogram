@@ -27,10 +27,12 @@ public class LeaveRequestService {
        List<LeaveRequest> leaveRequests = leaveRequestRepo.findAll();
          return leaveRequests.stream().map(lea -> {
             LeaveRequestCreateDto dto = new LeaveRequestCreateDto();
+                dto.setId(lea.getId());
                 dto.setEmployeeId(lea.getEmployee().getId());
                 dto.setStartDate(lea.getStartDate());
                 dto.setEndDate(lea.getEndDate());
                 dto.setReason(lea.getReason());
+                dto.setStatus(lea.getStatus());
                 return dto;
 
          }).collect(Collectors.toList());
