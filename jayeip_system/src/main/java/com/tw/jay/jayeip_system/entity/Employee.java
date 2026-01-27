@@ -16,6 +16,9 @@ public class Employee {
     private String email;
     private String position;
     private Long approverId;
+    private String username;
+    private String password;
+    private String role;//權限
 
     @ManyToOne
     @JoinColumn(name = "department_id")
@@ -67,6 +70,30 @@ public class Employee {
 
     public void setApproverId(Long approverId) {
         this.approverId = approverId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 
