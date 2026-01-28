@@ -1,32 +1,35 @@
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const loginData = {
-        username: document.getElementById('username').value,
-        password: document.getElementById('password').value
-    };
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-    fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => {
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
         if (response.ok) {
-            return response.json(); // 解析 JSON 格式的 Token
+            const data = await response.json();
+
+            // 1. 將 Token 儲存在 localStorage (有效期會一直持續到手動刪除)
+            localStorage.setItem('token', data.token);
+
+            alert('登入成功！');
+
+            // 2. 跳轉到首頁 (假設你的首頁叫 index.html)
+            window.location.href = '/index.html';
         } else {
-            throw new Error('帳號或密碼錯誤');
+            // 處理 403 或 401 錯誤
+            const errorMsg = await response.text();
+            alert('登入失敗：帳號或密碼錯誤');
         }
-    })
-    .then(data => {
-        // 1. 將 Token 存入 localStorage
-        localStorage.setItem('token', data.token);
-        
-        // 2. 提示成功並跳轉到主頁 (假單列表頁)
-        alert('登入成功！');
-        window.location.href = 'index.html'; 
-    })
-    .catch(error => {
-        alert('登入失敗：' + error.message);
-    });
+    } catch (error) {
+        console.error('Error:', error);
+        alert('系統連線異常，請稍後再試');
+    }
 });

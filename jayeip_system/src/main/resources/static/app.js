@@ -191,3 +191,53 @@ function login() {
         }
     });
 }
+// 9. 檢查是否已登入
+
+async function checkLogin() {
+    const token = localStorage.getItem('token');
+    const path = window.location.pathname;
+
+    // 如果沒 Token 且不在登入/註冊頁，就踢回登入頁
+    if (!token && !path.includes('login.html') && !path.includes('register.html')) {
+        window.location.href = '/login.html';
+        return;
+    }
+
+    // 如果有 Token，嘗試去後端抓使用者資訊
+    if (token) {
+        try {
+            const response = await fetch('/api/user/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+                // 找到頁面上顯示名字的元素並填入
+                const welcomeElement = document.getElementById('welcomeMsg');
+                if (welcomeElement) {
+                    welcomeElement.innerText = `歡迎回來，${user.username}！`;
+                }
+            } else {
+                // Token 可能過期或無效，清掉它
+                localStorage.removeItem('token');
+                if (!path.includes('login.html')) {
+                    window.location.href = '/login.html';
+                }
+            }
+        } catch (error) {
+            console.error('驗證失敗', error);
+        }
+    }
+}
+
+// 登出功能
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
+}
+
+// 頁面載入後執行
+document.addEventListener('DOMContentLoaded', checkLogin);
