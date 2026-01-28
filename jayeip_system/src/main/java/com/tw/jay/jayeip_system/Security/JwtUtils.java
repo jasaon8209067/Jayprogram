@@ -20,5 +20,19 @@ public class JwtUtils {
                 .setExpiration(new Date((new Date()).getTime() + expirationMs))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
-    } 
+    }
+
+	public boolean validateToken(String token) {
+		try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            // Token 過期或簽章錯誤會進到這裡
+            return false;
+        }
+	}
+
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
 }

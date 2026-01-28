@@ -42,6 +42,7 @@ public class AuthService {
 
     public String login(String username, String password) {
         // 登入邏輯，先找到員工
+        System.out.println("正在嘗試登入: " + username);
         Employee emp = employeeRepo.findByUsername(username)
         .orElseThrow(() -> new RuntimeException("帳號或密碼錯誤"));
 
