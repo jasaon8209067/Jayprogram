@@ -169,3 +169,25 @@ function reviewLeave(id, status) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+// 8. 登入功能
+function login() {
+    const loginData = {
+        username: 'Eason',
+        password: '123456'
+    };
+
+    fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.token) {
+            localStorage.setItem('token', data.token); // 儲存 Token
+            alert('登入成功！');
+            location.href = 'index.html'; // 跳轉頁面
+        }
+    });
+}

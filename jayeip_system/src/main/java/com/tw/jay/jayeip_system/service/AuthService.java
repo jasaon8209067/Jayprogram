@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tw.jay.jayeip_system.DTO.Request.AuthRequestDto;
+import com.tw.jay.jayeip_system.Security.JwtUtils;
 import com.tw.jay.jayeip_system.entity.Employee;
 import com.tw.jay.jayeip_system.repository.EmployeeRepo;
 
@@ -16,7 +17,10 @@ public class AuthService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    public void regoster(AuthRequestDto dto) {
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    public void register(AuthRequestDto dto) {
         //檢查帳號是否重複
         if (employeeRepo.existsByUsername(dto.getUsername())) {
             throw new RuntimeException("帳號已存在");
@@ -34,5 +38,20 @@ public class AuthService {
         // 之後可以根據需求改成 ROLE_USER
         emp.setRole("ROLE_USER");
         employeeRepo.save(emp);
+    }
+
+    public String login(String username, String password) {
+        // 登入邏輯，先找到員工
+        Employee emp = employeeRepo.findByUsername(username)
+        .orElseThrow(() -> new RuntimeException("帳號或密碼錯誤"));
+
+        // 比對密碼
+        if (!passwordEncoder.matches(password, emp.getPassword())) {
+            throw new RuntimeException("帳號或密碼錯誤");
+        }
+        
+        // 驗證成功
+        return jwtUtils.generateToken(emp.getUsername());
+
     }
 }
