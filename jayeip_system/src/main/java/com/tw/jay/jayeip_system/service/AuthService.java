@@ -28,8 +28,10 @@ public class AuthService {
 
         Employee emp = new Employee();
         emp.setUsername(dto.getUsername());
+
         //加密密碼
-        emp.setPassword(passwordEncoder.encode(dto.getPassword()));
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        emp.setPassword(encodedPassword);
         emp.setName(dto.getName());
         emp.setEmail(dto.getEmail());
         emp.setPosition(dto.getPosition());
